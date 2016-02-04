@@ -21,7 +21,7 @@ mkdir SDPA
 cd SDPA
 wget -O sdpa_7.3.8.tar.gz http://sourceforge.net/projects/sdpa/files/sdpa/sdpa_7.3.8.tar.gz/download
 tar xvfz sdpa_7.3.8.tar.gz
-cd sdpa_7.3.8
+cd sdpa-7.3.8
 ./configure
 make
 sudo cp sdpa /usr/local/bin

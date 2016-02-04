@@ -50,6 +50,11 @@ The output format consists of three fields: the approximation value (``#Approxim
 
 The ``uis`` and ``vjs`` correspond to the ``x_i`` and ``y_i`` in equation (1) of [1].
 
+## SDPA details ##
+The SDPA algorithm [2] is based on a Mehrotra-type predictor-corrector infeasible primal-dual interior-point method with the Helmberg, Kojima, Monteiro direction. The sparse input format is utilized, and input/output files can be found with extensions ``_SDPAinput.dat-s`` and ``_SDPAoutput.txt``.
+direction
+
 
 ## Citations ##
-[1] Alon, Noga, and Assaf Naor. "Approximating the cut-norm via Grothendieck's inequality." SIAM Journal on Computing 35.4 (2006): 787-803.
+[1] Alon, N., and Naor, A. "Approximating the cut-norm via Grothendieck's inequality." SIAM Journal on Computing 35.4 (2006): 787-803.
+[2]Fujisawa, K., et al. "SDPA (SemiDefinite Programming Algorithm) and SDPA-GMP User’s Manual—Version 7.1.1." Department of Mathematical and Computing Sciences, Tokyo Institute of Technology. Research Reports on Mathematical and Computing Sciences Series B: Operations Research (2008).

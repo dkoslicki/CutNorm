@@ -19,7 +19,7 @@ def main(argv):
 	SDPA_exec_path = "sdpa"
 	num_threads = 1
 	try:
-		opts, args = getopt.getopt(argv, "m:s:o:et:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","SDPAExecutable=","NumThreads="])
+		opts, args = getopt.getopt(argv, "m:s:o:e:t:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","SDPAExecutable=","NumThreads="])
 	except getopt.GetoptError:
 		print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA> -t <NumThreads>'
 		sys.exit(2)

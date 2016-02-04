@@ -55,7 +55,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 		print("Error: shape of matrices are not the same")
 		sys.exit(2)
 	#Make input file for SDPA
-	base_path = os.path.dirname(file_path_sample)
+	base_path = os.path.dirname(os.path.abspath(file_path_output))
 	SDPA_input_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_sample))[0]+'_SDPAinput.dat-s')
 	SDPA_output_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_sample))[0]+'_SDPAoutput.txt')
 	fid = open(SDPA_input_file,'w')

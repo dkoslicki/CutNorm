@@ -52,7 +52,6 @@ The ``uis`` and ``vjs`` correspond to the ``x_i`` and ``y_i`` in equation (1) of
 
 ## SDPA details ##
 The SDPA algorithm [2] is based on a Mehrotra-type predictor-corrector infeasible primal-dual interior-point method with the Helmberg, Kojima, Monteiro direction. The sparse input format is utilized, and input/output files can be found with extensions ``_SDPAinput.dat-s`` and ``_SDPAoutput.txt``.
-direction
 
 
 ## Citations ##

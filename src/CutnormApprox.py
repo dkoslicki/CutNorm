@@ -17,14 +17,15 @@ def main(argv):
 	file_path_sample = None
 	file_path_output = None
 	SDPA_exec_path = "sdpa"
+	num_threads = 1
 	try:
-		opts, args = getopt.getopt(argv, "m:s:o:e", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","SDPAExecutable="])
+		opts, args = getopt.getopt(argv, "m:s:o:et:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","SDPAExecutable=","NumThreads="])
 	except getopt.GetoptError:
-		print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA>'
+		print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA> -t <NumThreads>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA>'
+			print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA> -t <NumThreads>'
 			sys.exit(2)
 		elif opt in ("-m", "--MaxEntropyMatrix"):
 			file_path_max_ent = arg
@@ -34,10 +35,12 @@ def main(argv):
 			file_path_output = arg
 		elif opt in ("-e", "--SDPAExecutable"):
 			SDPA_exec_path = arg
+		elif opt in ("-t", "--NumThreads"):
+			num_threads = arg
 	#Run the main program
-	calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec_path)
+	calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec_path,num_threads)
 
-def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec_path):
+def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec_path,num_threads):
 	assert isinstance(file_path_max_ent,basestring), file_path_max_ent
 	assert isinstance(file_path_sample,basestring), file_path_sample
 	assert isinstance(file_path_output,basestring), file_path_output
@@ -61,7 +64,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	fid.close()
 	
 	#Run SDPA
-	cmd = SDPA_exec_path + " " + SDPA_input_file + " " + SDPA_output_file
+	cmd = SDPA_exec_path + " " + SDPA_input_file + " " + SDPA_output_file + " " + "-numThreads " + str(num_threads)
 	res = subprocess.check_output(cmd, shell = True)
 	
 	#Parse SDPA output

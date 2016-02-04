@@ -157,7 +157,7 @@ def make_SDPA_input(fid,D):
 	Js = list()
 	for i in range(n_rows):
 		for j in range(n_columns):
-			fid.write("0 1 %d %d %d\n" % (i+1, j+n_rows+1, D[i,j]))
+			fid.write("0 1 %d %d %f\n" % (i+1, j+n_rows+1, D[i,j]))
 			Is.append(i+1)
 			Js.append(j+n_rows+1)
 	Is = list(set(Is))

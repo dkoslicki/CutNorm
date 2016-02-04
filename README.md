@@ -56,4 +56,5 @@ The SDPA algorithm [2] is based on a Mehrotra-type predictor-corrector infeasibl
 
 ## Citations ##
 [1] Alon, N., and Naor, A. "Approximating the cut-norm via Grothendieck's inequality." SIAM Journal on Computing 35.4 (2006): 787-803.
+
 [2]Fujisawa, K., et al. "SDPA (SemiDefinite Programming Algorithm) and SDPA-GMP User’s Manual—Version 7.1.1." Department of Mathematical and Computing Sciences, Tokyo Institute of Technology. Research Reports on Mathematical and Computing Sciences Series B: Operations Research (2008).

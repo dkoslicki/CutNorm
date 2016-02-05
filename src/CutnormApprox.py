@@ -78,6 +78,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	eigen_values,eigen_vectors = scipy.linalg.eigh(Y)
 	idx = eigen_values.argsort()[::-1]
 	eigen_values = eigen_values[idx]
+	all_eigen_values = eigen_values[:]
 	eigen_vectors = eigen_vectors[:,idx]
 	for positive_index in range(len(eigen_values)):
 		if eigen_values[positive_index]<=0:
@@ -139,6 +140,13 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 			fid.write("%f\n" % vjs_opt[i])
 		else:
 			fid.write("%f," % vjs_opt[i])
+
+	fid.write("#Eigenvalues\n")
+	for i in range(len(all_eigen_values)):
+		if i == len(all_eigen_values)-1:
+			fid.write("%f\n" % all_eigen_values[i])
+		else:
+			fid.write("%f," % all_eigen_values[i])
 
 
 	fid.close()

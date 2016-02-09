@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os, sys, shutil, subprocess, getopt, math, copy
 import numpy as np
 from cStringIO import StringIO

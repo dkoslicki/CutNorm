@@ -116,14 +116,14 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	fid = open(file_path_output,'w')
 	fid.write("#Approximation\n")
 	fid.write("%f\n" % approx_opt)
-	fid.write("#Ymat\n")
-	for i in range(num_var):
-		for j in range(num_var):
-			if j == num_var-1:
-				fid.write("%f" % Y[i,j])
-			else:
-				fid.write("%f," % Y[i,j])
-		fid.write("\n")
+#	fid.write("#Ymat\n")
+#	for i in range(num_var):
+#		for j in range(num_var):
+#			if j == num_var-1:
+#				fid.write("%f" % Y[i,j])
+#			else:
+#				fid.write("%f," % Y[i,j])
+#		fid.write("\n")
 
 	fid.write("#ui's (rows)\n")
 	for i in range(len(uis_opt)):
@@ -132,7 +132,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 		else:
 			fid.write("%f," % uis_opt[i])
 
-	fid.write("#vj's (rows)\n")
+	fid.write("#vj's (columns)\n")
 	for i in range(len(vjs_opt)):
 		if i == len(vjs_opt)-1:
 			fid.write("%f\n" % vjs_opt[i])

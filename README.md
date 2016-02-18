@@ -35,15 +35,26 @@ The script(s) contained in ``src`` are written in python and should run upon ins
 ## Usage ##
 The script ``CutnormApprox.py`` is run via
 ```
-./CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA>'
+python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA>'
 ```
 
 For example, using the included test data, upon running
 ```
-./CutnormApprox.py -m ../test/A.csv -s ../test/B.csv -o ../test/out.txt
+python CutnormApprox.py -m ../test/A.csv -s ../test/B.csv -o ../test/out.txt
 ```
 
 The file ``out.txt`` should match the included file ``/test/AB_out.txt``.
+
+The script ``MaxEntMatrix.py`` is run via
+```bash
+python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv> -e <ExecutableForSDPA>
+```
+
+The file ``ColumnDegrees.csv`` is a csv file with a single line representing the degrees of the columns.
+
+The file ``RowDegrees.csv`` is a csv file with a single line representing the degrees of the rows.
+
+The file ``Output.csv`` is a csv file containing the maximum entropy matrix Z from Barvinok 2009.
 
 ## Output format ##
 The output format consists of three fields: the approximation value (``#Approximation``), the pertinent part of the output of SDPA (``#Ymat``) and the rounded variable values (``#ui's (rows)`` and ``#vj's (columns)``).

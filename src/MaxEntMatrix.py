@@ -19,11 +19,11 @@ def main(argv):
 	try:
 		opts, args = getopt.getopt(argv, "c:r:o:e:", ["ColumnDegrees=", "RowDegrees=", "Output=","SDPAExecutable="])
 	except getopt.GetoptError:
-		print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.txt> -e <ExecutableForSDPA>'
+		print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv> -e <ExecutableForSDPA>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.txt> -e <ExecutableForSDPA>'
+			print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv> -e <ExecutableForSDPA>'
 			sys.exit(2)
 		elif opt in ("-c", "--ColumnDegrees"):
 			file_path_c = arg

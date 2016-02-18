@@ -36,7 +36,7 @@ def main(argv):
 	#Run the main program
 	calc_max_ent(file_path_c, file_path_r, file_path_output, SDPA_exec_path)
 
-def G(x,r,c):
+def G(x,r,c): #This is the G function on page 3 of Barvinok 2009
 	m = len(r)
 	n = len(c)
 	s = x[0:m]

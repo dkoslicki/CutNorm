@@ -69,7 +69,8 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	fid = open(SDPA_output_file,"r")
 	SDPA_output = fid.read()
 	fid.close()
-	y_mat_text = find_between(SDPA_output,"yMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
+	#y_mat_text = find_between(SDPA_output,"yMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
+	y_mat_text = find_between(SDPA_output,"xMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
 	Y = np.genfromtxt(StringIO(y_mat_text),delimiter=',')
 	#eigen_values,eigen_vectors = np.linalg.eig(Y) #could probably use eigh
 	#eigen_values,eigen_vectors = scipy.linalg.eigh(Y,eigvals=(num_var-2,num_var-1)) #assumes Y symmetric, use this and a loop if it's too inneficient to compute ALL the eigenvalues, just loop through getting the top k until the are <=0

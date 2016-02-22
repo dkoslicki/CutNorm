@@ -7,7 +7,6 @@ import scipy.optimize
 
 # file_path_c='test_c.csv'
 # file_path_r='test_r.csv'
-# SDPA_exec_path = "/home/david/Desktop/SDPA/sdpa-7.3.8/./sdpa"
 # file_path_output='out_Z.csv'
 
 
@@ -15,15 +14,14 @@ def main(argv):
 	file_path_c = None
 	file_path_r = None
 	file_path_output = None
-	SDPA_exec_path = "sdpa"
 	try:
-		opts, args = getopt.getopt(argv, "c:r:o:e:", ["ColumnDegrees=", "RowDegrees=", "Output=","SDPAExecutable="])
+		opts, args = getopt.getopt(argv, "c:r:o:", ["ColumnDegrees=", "RowDegrees=", "Output="])
 	except getopt.GetoptError:
-		print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv> -e <ExecutableForSDPA>'
+		print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv> -e <ExecutableForSDPA>'
+			print 'Call using: python MaxEntMatrix.py -c <ColumnDegrees.csv> -r <RowDegrees.csv> -o <Output.csv>'
 			sys.exit(2)
 		elif opt in ("-c", "--ColumnDegrees"):
 			file_path_c = arg
@@ -31,10 +29,8 @@ def main(argv):
 			file_path_r = arg
 		elif opt in ("-o", "--Output"):
 			file_path_output = arg
-		elif opt in ("-e", "--SDPAExecutable"):
-			SDPA_exec_path = arg
 	#Run the main program
-	calc_max_ent(file_path_c, file_path_r, file_path_output, SDPA_exec_path)
+	calc_max_ent(file_path_c, file_path_r, file_path_output)
 
 def G(x,r,c): #This is the G function on page 3 of Barvinok 2009
 	m = len(r)
@@ -45,7 +41,7 @@ def G(x,r,c): #This is the G function on page 3 of Barvinok 2009
 	return res
 
 
-def calc_max_ent(file_path_c, file_path_r, file_path_output, SDPA_exec_path):
+def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	assert isinstance(file_path_c,basestring), file_path_c
 	assert isinstance(file_path_r,basestring), file_path_r
 	assert isinstance(file_path_output,basestring), file_path_output

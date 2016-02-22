@@ -66,7 +66,7 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 			Z[i,j] = x[i]*y[j]/(1+x[i]*y[j])
 	
 	
-	np.savetxt(file_path_output, Z, delimiter=',', fmt='%.10f')
+	np.savetxt(file_path_output, Z, delimiter=',')
 
 
 	

@@ -116,7 +116,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 	approx_opt = 0
 	uis_opt = list()
 	vjs_opt = list()
-	for dummy in range(1,1000): #I'll use the sample average, can make this a parameter later
+	for dummy in range(1,1000): #I'll use the max value, can make this a parameter later.
 		G = np.zeros(positive_index)
 		for i in range(len(G)):
 			G[i] = np.random.normal()
@@ -142,7 +142,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 	fid.write("%f\n" % approx_opt)
 	fid.write("#Interval of cut norm approximation\n")
 	fid.write("[%f,%f]\n" % (approx_opt/4, np.minimum(CSDP_primal_value/4, approx_opt/(4*(4/np.pi-1))))) #bounds from Alon and Noar 2004 paper
-#	fid.write("#Ymat\n")
+#	fid.write("#Ymat\n") #Too large to save
 #	for i in range(num_var):
 #		for j in range(num_var):
 #			if j == num_var-1:
@@ -207,7 +207,7 @@ def make_CSDP_input(fid,D):
 	fid.write("%d = mDIM\n" % num_var)
 	fid.write("1 = nBLOCK\n")
 	fid.write("%d = bLOCKsTRUCT\n" % num_var)
-	for it in range(n_rows*n_columns):
+	for it in range(n_rows+n_columns):
 		fid.write("1 ")
 	fid.write("\n")
 	Is = list()

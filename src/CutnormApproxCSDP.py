@@ -138,10 +138,10 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 
 	#Save output
 	fid = open(file_path_output,'w')
-	fid.write("#Approximation\n")
+	fid.write("#Approximation of infinity-to-one norm\n")
 	fid.write("%f\n" % approx_opt)
 	fid.write("#Interval of cut norm approximation\n")
-	fid.write("[%f,%f]" % (approx_opt/4, np.minimum(CSDP_primal_value/4, approx_opt/(4*(4/np.pi-1))))) #bounds from Alon and Noar 2004 paper
+	fid.write("[%f,%f]\n" % (approx_opt/4, np.minimum(CSDP_primal_value/4, approx_opt/(4*(4/np.pi-1))))) #bounds from Alon and Noar 2004 paper
 #	fid.write("#Ymat\n")
 #	for i in range(num_var):
 #		for j in range(num_var):

@@ -15,15 +15,14 @@ def main(argv):
 	file_path_sample = None
 	file_path_output = None
 	CSDP_exec_path = "CSDP"
-	num_threads = 1
 	try:
-		opts, args = getopt.getopt(argv, "m:s:o:e:t:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","CSDPExecutable=","NumThreads="])
+		opts, args = getopt.getopt(argv, "m:s:o:e:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","CSDPExecutable="])
 	except getopt.GetoptError:
-		print 'Call using: python CutnormApproxCSDP.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForCSDP> -t <NumThreads>'
+		print 'Call using: python CutnormApproxCSDP.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForCSDP>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Call using: python CutnormApproxCSDP.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForCSDP> -t <NumThreads>'
+			print 'Call using: python CutnormApproxCSDP.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForCSDP>'
 			sys.exit(2)
 		elif opt in ("-m", "--MaxEntropyMatrix"):
 			file_path_max_ent = arg
@@ -33,12 +32,10 @@ def main(argv):
 			file_path_output = arg
 		elif opt in ("-e", "--CSDPExecutable"):
 			CSDP_exec_path = arg
-		elif opt in ("-t", "--NumThreads"):
-			num_threads = arg
 	#Run the main program
-	calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path,num_threads)
+	calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path)
 
-def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path,num_threads):
+def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path):
 	assert isinstance(file_path_max_ent,basestring), file_path_max_ent
 	assert isinstance(file_path_sample,basestring), file_path_sample
 	assert isinstance(file_path_output,basestring), file_path_output

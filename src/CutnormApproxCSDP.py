@@ -165,7 +165,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 		else:
 			fid.write("%f," % vjs_opt[i])
 
-	fid.write("#Eigenvalues\n")
+	fid.write("#Eigenvalues. If there are only two distinct eigenvalues, then the lower bound of the approximation of the cut norm is exact\n")
 	for i in range(len(all_eigen_values)):
 		if i == len(all_eigen_values)-1:
 			fid.write("%f\n" % all_eigen_values[i])

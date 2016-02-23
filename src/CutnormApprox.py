@@ -48,7 +48,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	S = np.genfromtxt(file_path_sample,delimiter=',')
 	num_rows = np.shape(Z)[0]
 	num_columns = np.shape(Z)[1]
-	num_var = num_rows*num_columns
+	num_var = num_rows+num_columns
 	if np.shape(Z) != np.shape(S):
 		print("Error: shape of matrices are not the same")
 		sys.exit(2)
@@ -69,8 +69,8 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	fid = open(SDPA_output_file,"r")
 	SDPA_output = fid.read()
 	fid.close()
-	#y_mat_text = find_between(SDPA_output,"yMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
-	y_mat_text = find_between(SDPA_output,"xMat = \n{\n{ ", "   }\n}\nyMat").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
+	y_mat_text = find_between(SDPA_output,"yMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
+	#y_mat_text = find_between(SDPA_output,"xMat = \n{\n{ ", "   }\n}\nyMat").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
 	Y = np.genfromtxt(StringIO(y_mat_text),delimiter=',')
 	#eigen_values,eigen_vectors = np.linalg.eig(Y) #could probably use eigh
 	#eigen_values,eigen_vectors = scipy.linalg.eigh(Y,eigvals=(num_var-2,num_var-1)) #assumes Y symmetric, use this and a loop if it's too inneficient to compute ALL the eigenvalues, just loop through getting the top k until the are <=0
@@ -151,28 +151,55 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	fid.close()
 
 
+#Attempt at primal, can't figure out what's wrong with it...so let's do the dual
+#def make_SDPA_input(fid,D):
+#	n_rows = np.shape(D)[0]
+#	n_columns = np.shape(D)[1]
+#	num_var = n_columns*n_rows
+#	fid.write("\"Example\"\n")
+#	fid.write("%d = mDIM\n" % num_var)
+#	fid.write("1 = nBLOCK\n")
+#	fid.write("%d = bLOCKsTRUCT\n" % num_var)
+#	#for it in range(n_rows*n_columns):
+#	#	fid.write("1 ")
+#	for i in range(n_rows):
+#		for j in range(n_columns):
+#			fid.write("%f " % -D[i,j]) #minimize the negative => maximize
+#	fid.write("\n")
+#	for i in range(num_var):
+#		fid.write("0 1 %d %d -1\n" % (i+1,i+1)) #Make sure the inner products are 1 (u_1 . u_1 = 1)
+#	iter = 1
+#	for i in range(n_rows):
+#		for j in range(n_columns):
+#			fid.write("%d 1 %d %d 1\n" % (iter, i+1, j+n_rows+1)) #Make sure the x_i's correspond to entries in the variable matrix X
+#			iter = iter + 1
 
 def make_SDPA_input(fid,D):
 	n_rows = np.shape(D)[0]
 	n_columns = np.shape(D)[1]
-	num_var = n_columns*n_rows
+	num_var = n_columns+n_rows
 	fid.write("\"Example\"\n")
 	fid.write("%d = mDIM\n" % num_var)
 	fid.write("1 = nBLOCK\n")
 	fid.write("%d = bLOCKsTRUCT\n" % num_var)
-	#for it in range(n_rows*n_columns):
-	#	fid.write("1 ")
-	for i in range(n_rows):
-		for j in range(n_columns):
-			fid.write("%f " % -D[i,j]) #minimize the negative => maximize
+	for it in range(n_rows*n_columns):
+		fid.write("1 ")
 	fid.write("\n")
-	for i in range(num_var):
-		fid.write("0 1 %d %d -1\n" % (i+1,i+1)) #Make sure the inner products are 1 (u_1 . u_1 = 1)
-	iter = 1
+	Is = list()
+	Js = list()
 	for i in range(n_rows):
 		for j in range(n_columns):
-			fid.write("%d 1 %d %d 1\n" % (iter, i+1, j+n_rows+1)) #Make sure the x_i's correspond to entries in the variable matrix X
-			iter = iter + 1
+			fid.write("0 1 %d %d %f\n" % (i+1, j+n_rows+1, D[i,j]))
+			Is.append(i+1)
+			Js.append(j+n_rows+1)
+	Is = list(set(Is))
+	Js = list(set(Js))
+	for i in Is:
+		fid.write("%d 1 %d %d 1\n" % (i,i,i))
+	for j in Js:
+		fid.write("%d 1 %d %d 1\n" % (j,j,j))
+
+
 
 
 def find_between( s, first, last ):

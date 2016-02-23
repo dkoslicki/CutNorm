@@ -6,7 +6,7 @@ import scipy.linalg
 
 # file_path_max_ent='MedBilayerG1_Z.csv'
 # file_path_sample='MedBilayerG1_warswap.out_E_out.csv'
-# SDPA_exec_path = "/home/david/Desktop/SDPA/sdpa-7.3.8/./sdpa"
+# CSDP_exec_path = "/home/david/Desktop/CSDP/CSDP-7.3.8/./CSDP"
 # file_path_output='test.txt'
 
 
@@ -14,16 +14,15 @@ def main(argv):
 	file_path_max_ent = None
 	file_path_sample = None
 	file_path_output = None
-	SDPA_exec_path = "sdpa"
-	num_threads = 1
+	CSDP_exec_path = "CSDP"
 	try:
-		opts, args = getopt.getopt(argv, "m:s:o:e:t:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","SDPAExecutable=","NumThreads="])
+		opts, args = getopt.getopt(argv, "m:s:o:e:", ["MaxEntropyMatrix=", "SampleAveMatrix=", "Output=","CSDPExecutable="])
 	except getopt.GetoptError:
-		print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA> -t <NumThreads>'
+		print 'Call using: python CutnormApproxCSDP.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForCSDP>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'Call using: python CutnormApprox.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForSDPA> -t <NumThreads>'
+			print 'Call using: python CutnormApproxCSDP.py -m <MaxEntropyMatrix.csv> -s <SampleAveMatrix.csv> -o <Output.txt> -e <ExecutableForCSDP>'
 			sys.exit(2)
 		elif opt in ("-m", "--MaxEntropyMatrix"):
 			file_path_max_ent = arg
@@ -31,14 +30,12 @@ def main(argv):
 			file_path_sample = arg
 		elif opt in ("-o", "--Output"):
 			file_path_output = arg
-		elif opt in ("-e", "--SDPAExecutable"):
-			SDPA_exec_path = arg
-		elif opt in ("-t", "--NumThreads"):
-			num_threads = arg
+		elif opt in ("-e", "--CSDPExecutable"):
+			CSDP_exec_path = arg
 	#Run the main program
-	calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec_path,num_threads)
+	calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path)
 
-def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec_path,num_threads):
+def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path):
 	assert isinstance(file_path_max_ent,basestring), file_path_max_ent
 	assert isinstance(file_path_sample,basestring), file_path_sample
 	assert isinstance(file_path_output,basestring), file_path_output
@@ -52,26 +49,52 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 	if np.shape(Z) != np.shape(S):
 		print("Error: shape of matrices are not the same")
 		sys.exit(2)
-	#Make input file for SDPA
+	#Make input file for CSDP
 	base_path = os.path.dirname(os.path.abspath(file_path_output))
-	SDPA_input_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_output))[0]+'_SDPAinput.dat-s')
-	SDPA_output_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_output))[0]+'_SDPAoutput.txt')
-	fid = open(SDPA_input_file,'w')
+	CSDP_input_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_output))[0]+'_CSDPinput.dat-s')
+	CSDP_output_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_output))[0]+'_CSDPoutput.txt')
+	fid = open(CSDP_input_file,'w')
 	D = Z-S
-	make_SDPA_input(fid,D)
+	make_CSDP_input(fid,D)
 	fid.close()
 	
-	#Run SDPA
-	cmd = SDPA_exec_path + " -ds " + SDPA_input_file + " -o " + SDPA_output_file + " " + "-numThreads " + str(num_threads) + " -dimacs -pt 1" #-pt 1 fast but unstable, -pt 2 stable/slow, -pt 0 default
+	#Run CSDP
+	#cmd = CSDP_exec_path + " -ds " + CSDP_input_file + " -o " + CSDP_output_file + " " + "-numThreads " + str(num_threads) + " -dimacs -pt 1" #-pt 1 fast but unstable, -pt 2 stable/slow, -pt 0 default
+	cmd = CSDP_exec_path + " " + CSDP_input_file + " " + CSDP_output_file 
 	res = subprocess.check_output(cmd, shell = True)
 	
-	#Parse SDPA output
-	fid = open(SDPA_output_file,"r")
-	SDPA_output = fid.read()
+	#Get primal value from res
+	CSDP_primal_value = float(find_between(res,"Primal objective value: ", " \n"))/2
+	
+	#Parse CSDP output
+	fid = open(CSDP_output_file,"r")
+	CSDP_output = fid.read()
 	fid.close()
-	y_mat_text = find_between(SDPA_output,"yMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
-	#y_mat_text = find_between(SDPA_output,"xMat = \n{\n{ ", "   }\n}\nyMat").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the SDPA output format (if you can call it that) is a BEAR to parse!
-	Y = np.genfromtxt(StringIO(y_mat_text),delimiter=',')
+	#y_mat_text = find_between(CSDP_output,"yMat = \n{\n{ ", "   }\n}\n    main").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the CSDP output format (if you can call it that) is a BEAR to parse!
+	#y_mat_text = find_between(CSDP_output,"xMat = \n{\n{ ", "   }\n}\nyMat").replace("{","").replace("}","").replace(" ","").replace(",\n","\n") 	#Yes, the CSDP output format (if you can call it that) is a BEAR to parse!
+	#Y = np.genfromtxt(StringIO(y_mat_text),delimiter=',')
+	
+	CSDP_output_split = CSDP_output.split("\n")
+	#First line is optimal y, matrix 1 is optimal Z, matrix 2 is optimal X
+	Z = np.zeros((num_var,num_var))
+	X = np.zeros((num_var,num_var))
+	for line in CSDP_output_split[1:]:
+		line_split = line.split(' ') #csdp output has a trailing blank line
+		if line_split[0] != '':
+			if float(line_split[0]) == 1:
+				i = int(line_split[2])-1 #csdp output uses 1-based indexing
+				j = int(line_split[3])-1
+				val = float(line_split[4])
+				Z[i,j] = val
+				Z[j,i] = val
+			elif float(line_split[0]) == 2:
+				i = int(line_split[2])-1
+				j = int(line_split[3])-1
+				val = float(line_split[4])
+				X[i,j] = val
+				X[j,i] = val
+
+	Y = X #I was using Y before, so this is just me being lazy
 	#eigen_values,eigen_vectors = np.linalg.eig(Y) #could probably use eigh
 	#eigen_values,eigen_vectors = scipy.linalg.eigh(Y,eigvals=(num_var-2,num_var-1)) #assumes Y symmetric, use this and a loop if it's too inneficient to compute ALL the eigenvalues, just loop through getting the top k until the are <=0
 	eigen_values,eigen_vectors = scipy.linalg.eigh(Y)
@@ -115,8 +138,10 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 
 	#Save output
 	fid = open(file_path_output,'w')
-	fid.write("#Approximation\n")
+	fid.write("#Approximation of infinity-to-one norm\n")
 	fid.write("%f\n" % approx_opt)
+	fid.write("#Interval of cut norm approximation\n")
+	fid.write("[%f,%f]\n" % (approx_opt/4, np.minimum(CSDP_primal_value/4, approx_opt/(4*(4/np.pi-1))))) #bounds from Alon and Noar 2004 paper
 #	fid.write("#Ymat\n")
 #	for i in range(num_var):
 #		for j in range(num_var):
@@ -140,7 +165,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 		else:
 			fid.write("%f," % vjs_opt[i])
 
-	fid.write("#Eigenvalues\n")
+	fid.write("#Eigenvalues. If there are only two distinct eigenvalues, then the lower bound of the approximation of the cut norm is exact\n")
 	for i in range(len(all_eigen_values)):
 		if i == len(all_eigen_values)-1:
 			fid.write("%f\n" % all_eigen_values[i])
@@ -152,7 +177,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 
 
 #Attempt at primal, can't figure out what's wrong with it...so let's do the dual
-#def make_SDPA_input(fid,D):
+#def make_CSDP_input(fid,D):
 #	n_rows = np.shape(D)[0]
 #	n_columns = np.shape(D)[1]
 #	num_var = n_columns*n_rows
@@ -174,7 +199,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,SDPA_exec
 #			fid.write("%d 1 %d %d 1\n" % (iter, i+1, j+n_rows+1)) #Make sure the x_i's correspond to entries in the variable matrix X
 #			iter = iter + 1
 
-def make_SDPA_input(fid,D):
+def make_CSDP_input(fid,D):
 	n_rows = np.shape(D)[0]
 	n_columns = np.shape(D)[1]
 	num_var = n_columns+n_rows

@@ -1,7 +1,7 @@
 # Cut Norm Approximation #
 
 ## What is the cut norm approximation? ##
-The code contained herein uses CSDP to calculate a semidefinite approximation to the cut norm and then applied a rounding technique of [1]. We use the so-called infinity-to-one norm to approximate the cut norm, which is given by the quadratic integer program contained in equation (1) in [1]. The semidefinite relaxation (SDR) is given in equation (2) of [1]. We then apply the algorithm in Section 5.1 of [1] to round the SDR to a feasible solution of equation (1).
+The code contained herein uses CSDP to calculate a semidefinite approximation to the cut norm and then applies a rounding technique of [1]. We use the so-called infinity-to-one norm to approximate the cut norm, which is given by the quadratic integer program contained in equation (1) in [1]. The semidefinite relaxation (SDR) is given in equation (2) of [1]. We then apply the algorithm in Section 5.1 of [1] to round the SDR to a feasible solution of equation (1).
 
 As we want to use this as a norm: ||A-B||, two inputs are required. If you want the cut norm of just a single matrix, A, make B=0 the zero matrix.
 
@@ -46,6 +46,7 @@ The file ``Output.csv`` is a csv file containing the maximum entropy matrix Z fr
 
 ## Output format ##
 The output format consists of five fields:
+
 1. The approximation value of the infinity to one norm (``#Approximation of infinity-to-one norm``)
 2. The ``#Interval of cut norm approximation``
 3. The rounded solutions for the ``#uis``

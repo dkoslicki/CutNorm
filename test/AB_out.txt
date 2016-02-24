@@ -1,11 +1,10 @@
-#Approximation
+#Approximation of infinity-to-one norm
 3.000000
-#Ymat
-1.000000,0.250000,-0.612400,0.918600
-0.250000,1.000000,0.612400,0.612400
--0.612400,0.612400,1.000000,-0.250000
-0.918600,0.612400,-0.250000,1.000000
+#Interval of cut norm approximation
+[0.750000,0.918559]
 #ui's (rows)
--1.000000,-1.000000
-#vj's (rows)
--1.000000,-1.000000
+1.000000,1.000000
+#vj's (columns)
+1.000000,1.000000
+#Eigenvalues. If there are only two distinct eigenvalues, then the lower bound of the approximation of the cut norm is exact
+2.306186,1.693814,0.000000,0.000000

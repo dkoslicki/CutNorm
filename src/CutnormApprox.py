@@ -37,12 +37,15 @@ def main(argv):
 
 def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec_path):
 	assert isinstance(file_path_max_ent,basestring), file_path_max_ent
-	assert isinstance(file_path_sample,basestring), file_path_sample
+#	assert isinstance(file_path_sample,basestring), file_path_sample
 	assert isinstance(file_path_output,basestring), file_path_output
 	
 	#Read in files
 	Z = np.genfromtxt(file_path_max_ent,delimiter=',')
-	S = np.genfromtxt(file_path_sample,delimiter=',')
+	if file_path_sample == None:
+		S = 0*Z
+	else:
+		S = np.genfromtxt(file_path_sample,delimiter=',')
 	num_rows = np.shape(Z)[0]
 	num_columns = np.shape(Z)[1]
 	num_var = num_rows+num_columns

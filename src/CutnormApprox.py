@@ -119,7 +119,7 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 	approx_opt = 0
 	uis_opt = list()
 	vjs_opt = list()
-	for dummy in range(1,1000): #I'll use the max value, can make this a parameter later.
+	for dummy in range(1,10000): #I'll use the max value, can make this a parameter later.
 		G = np.zeros(positive_index)
 		for i in range(len(G)):
 			G[i] = np.random.normal()

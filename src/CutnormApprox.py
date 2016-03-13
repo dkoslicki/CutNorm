@@ -58,6 +58,10 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 	CSDP_output_file = os.path.join(base_path,os.path.splitext(os.path.basename(file_path_output))[0]+'_CSDPoutput.txt')
 	fid = open(CSDP_input_file,'w')
 	D = Z-S
+	is_exact = (D>=0).all()
+	if is_exact:
+		exact_cutnorm = float(D.sum()/4.0)
+	
 	make_CSDP_input(fid,D)
 	fid.close()
 	
@@ -142,10 +146,18 @@ def calc_cutnorm(file_path_max_ent, file_path_sample, file_path_output,CSDP_exec
 	#Save output
 	fid = open(file_path_output,'w')
 	fid.write("#Approximation of infinity-to-one norm\n")
-	fid.write("%f\n" % approx_opt)
+	if is_exact:
+		fid.write("%f\n" % (exact_cutnorm*4.0))
+	else:
+		fid.write("%f\n" % approx_opt)
+	
 	fid.write("#Interval of cut norm approximation\n")
 	#fid.write("[%f,%f]\n" % (approx_opt/4, np.minimum(CSDP_primal_value/4, approx_opt/(4*(4/np.pi-1))))) #bounds from Alon and Noar 2004 paper
-	fid.write("[%f,%f]\n" % (approx_opt/4, CSDP_primal_value/4)) #bounds from Alon and Noar 2004 paper will always be larger than the SDR norm
+	if is_exact:
+		fid.write("[%f,%f]\n" % (exact_cutnorm, exact_cutnorm)) #Exact since all entries nonnegative
+	else:
+		fid.write("[%f,%f]\n" % (approx_opt/4, CSDP_primal_value/4)) #bounds from Alon and Noar 2004 paper will always be larger than the SDR norm
+	
 #	fid.write("#Ymat\n") #Too large to save
 #	for i in range(num_var):
 #		for j in range(num_var):
@@ -244,3 +256,4 @@ def find_between( s, first, last ):
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
+

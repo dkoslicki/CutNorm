@@ -40,6 +40,36 @@ def G(x,r,c): #This is the G function on page 3 of Barvinok 2009
 	res = -np.sum(r*s) - np.sum(c*t) + np.sum(np.log(1+np.exp(t[:,np.newaxis]+s))) #-\sum_i r_i*s_i - \sum_i c_i*t_i + sum_{i,j} \log(1+e^{s_i+t_j})
 	return res
 
+def JacG(x,r,c):  # This is the Jacobian of the G function
+	res = list()
+	m = len(r)
+	n = len(c)
+	s = np.array(x[0:m])
+	t = np.array(x[m:])
+	for i in range(len(s)):
+		res.append(-r[i] + np.sum(np.exp(s[i]+t)/(1+np.exp(s[i]+t))))
+	for j in range(len(t)):
+		res.append(-c[j] + np.sum(np.exp(s+t[j])/(1+np.exp(s+t[j]))))
+	return np.array(res)
+
+def HessG(x, r, c):  # This is the Hessian of the G function
+	res = np.zeros((len(x),len(x)))
+	m = len(r)
+	n = len(c)
+	s = np.array(x[0:m])
+	t = np.array(x[m:])
+#	for i in range(m):
+#		for j in range(n):
+#			res[i,j+m] = np.exp(s[i]+t[j])/(1+np.exp(s[i]+t[j]))**2
+#	for i in range(m):
+#		for j in range(n):
+#			res[m+j,i] = np.exp(s[i]+t[j])/(1+np.exp(s[i]+t[j]))**2
+#	return res
+	temp = np.exp(s+t[:,np.newaxis])/(1+np.exp(s+t[:,np.newaxis]))**2  # Faster, but not 100% about the indicies
+	res[n:m+n,0:n] = temp.transpose()
+	res[0:n,n:m+n]=temp
+	return res
+
 
 def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	assert isinstance(file_path_c,basestring), file_path_c
@@ -55,7 +85,9 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	x0 = np.concatenate((r_degrees/np.sum(r_degrees), c_degrees/np.sum(c_degrees)))
 
 	#BFGS quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shannon.
-	res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees))
+	#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees))
+	#Newton-CG algorithm, using the Jacobian
+	res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')  
 	res = res.x
 	
 	x = np.exp(res[0:m])

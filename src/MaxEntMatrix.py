@@ -104,6 +104,11 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 		if not any(np.isnan(res)):
 			nan_flag = False
 		iter += 1
+		x0 = np.random.random(len(x0))
+		x0 = x0/sum(x0)
+		if iter == 1:  # first try the initial guess [1,0,...,0]
+			x0 = np.zeros(len(x0))
+			x0[0] = 1
 		if iter >= max_iter:
 			raise Exception("Unable to find valid optimum after 100 attempts. Are you sure this row/column combination is valid? If so, please try again.")
 

@@ -4,6 +4,7 @@ from cStringIO import StringIO
 import scipy
 import scipy.linalg
 import scipy.optimize
+import warnings
 
 # file_path_c='test_c.csv'
 # file_path_r='test_r.csv'
@@ -99,7 +100,9 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	iter = 0
 	while nan_flag:
 		#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG', options={'disp':True}, callback=myCallback)
-		res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore")
+			res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')
 		res = res.x
 		if not any(np.isnan(res)):
 			nan_flag = False

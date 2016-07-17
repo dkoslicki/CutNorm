@@ -71,6 +71,10 @@ def HessG(x, r, c):  # This is the Hessian of the G function
 	return res
 
 
+def myCallback(x):
+	print(x)
+
+
 def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	assert isinstance(file_path_c,basestring), file_path_c
 	assert isinstance(file_path_r,basestring), file_path_r
@@ -89,9 +93,20 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	#BFGS quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shannon.
 	#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees))
 	#Newton-CG algorithm, using the Jacobian
-	res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')
-	res = res.x
-	
+	#Oddly enough, scipy.optimize.minimize appears to sometimes wander off in nan territory, so let's run it enough times that it doesn't do this
+	nan_flag = True
+	max_iter = 100
+	iter = 0
+	while nan_flag:
+		#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG', options={'disp':True}, callback=myCallback)
+		res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')
+		res = res.x
+		if not any(np.isnan(res)):
+			nan_flag = False
+		iter += 1
+		if iter >= max_iter:
+			raise Exception("Unable to find valid optimum after 100 attempts. Are you sure this row/column combination is valid? If so, please try again.")
+
 	x = np.exp(res[0:m])
 	y = np.exp(res[m:])
 	Z = np.zeros((m,n))

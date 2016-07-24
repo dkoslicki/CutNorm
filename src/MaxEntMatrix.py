@@ -88,8 +88,6 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 	m = len(r_degrees)
 	n = len(c_degrees)
 	x0 = np.concatenate((r_degrees/np.sum(r_degrees), c_degrees/np.sum(c_degrees)))
-	x0 = np.ones(len(x0))
-	x0 = x0/sum(x0)
 
 	#BFGS quasi-Newton method of Broyden, Fletcher, Goldfarb, and Shannon.
 	#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees))
@@ -102,8 +100,13 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 		#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG', options={'disp':True}, callback=myCallback)
 		with warnings.catch_warnings():
 			warnings.simplefilter("ignore")
-			res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')
-		res = res.x
+			if min(len(r_degrees), len(c_degrees)) < 100:
+				res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees))
+			else:
+				x0 = np.ones(len(x0))
+				x0 = x0/sum(x0)
+				res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG')
+			res = res.x
 		if not any(np.isnan(res)):
 			nan_flag = False
 		iter += 1

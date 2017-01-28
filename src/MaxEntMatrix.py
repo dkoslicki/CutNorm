@@ -100,7 +100,7 @@ def calc_max_ent(file_path_c, file_path_r, file_path_output):
 		#res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees), jac=JacG, method='Newton-CG', options={'disp':True}, callback=myCallback)
 		with warnings.catch_warnings():
 			warnings.simplefilter("ignore")
-			if min(len(r_degrees), len(c_degrees)) < 100:
+			if max(len(r_degrees), len(c_degrees)) < 100:
 				res = scipy.optimize.minimize(G, x0, args=(r_degrees,c_degrees))
 			else:
 				x0 = np.ones(len(x0))
